@@ -1,0 +1,4 @@
+#ifndef RESOURCE_RECORD_H
+#define RESOURCE_RECORD_H
+
+#endif // RESOURCE_RECORD_H

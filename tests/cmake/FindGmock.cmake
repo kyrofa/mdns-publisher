@@ -1,0 +1,38 @@
+set(GMOCK_SOURCE_DIR "/usr/src/gmock" CACHE PATH "gmock source directory")
+set(GMOCK_INCLUDE_DIRS "/usr/include/gmock" CACHE PATH "gmock source include directory")
+set(GTEST_INCLUDE_DIRS "${GMOCK_SOURCE_DIR}/gtest/include" CACHE PATH "gtest source include directory")
+
+if(NOT TARGET gmock)
+	add_subdirectory(${GMOCK_SOURCE_DIR} "${CMAKE_CURRENT_BINARY_DIR}/gmock")
+endif()
+
+set(GTEST_LIBRARIES gtest gtest_main)
+set(GMOCK_LIBRARIES gmock gmock_main)
+
+foreach(directory IN LISTS GMOCK_INCLUDE_DIRS)
+	if(IS_DIRECTORY ${directory})
+		set(gmock_include_dir_found true)
+	endif()
+endforeach()
+
+if(IS_DIRECTORY ${GMOCK_SOURCE_DIR})
+	set(gmock_source_dir_found true)
+endif()
+
+foreach(directory IN LISTS GTEST_INCLUDE_DIRS)
+	if(IS_DIRECTORY ${directory})
+		set(gtest_include_dir_found true)
+	endif()
+endforeach()
+
+if(gmock_source_dir_found AND gmock_include_dir_found AND gtest_include_dir_found)
+	set(GMOCK_FOUND true)
+	message(STATUS "Found gmock: ${GMOCK_SOURCE_DIR}")
+else()
+	set(_message "Could NOT find gmock")
+	if(Gmock_FIND_REQUIRED)
+		message(FATAL_ERROR "${_message}")
+	elseif(NOT Gmock_FIND_QUIETLY)
+		message(STATUS "${_message}")
+	endif()
+endif()

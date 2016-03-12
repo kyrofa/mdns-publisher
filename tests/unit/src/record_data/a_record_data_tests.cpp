@@ -18,10 +18,11 @@ TEST(ARecordData, TestToBuffer)
 	ASSERT_EQ(4, buffer.size());
 
 	// Verify IP address octets
-	EXPECT_EQ(192, buffer.at(0));
-	EXPECT_EQ(168, buffer.at(1));
-	EXPECT_EQ(1, buffer.at(2));
-	EXPECT_EQ(2, buffer.at(3));
+	auto iterator = buffer.cbegin();
+	EXPECT_EQ(192, *iterator++);
+	EXPECT_EQ(168, *iterator++);
+	EXPECT_EQ(1, *iterator++);
+	EXPECT_EQ(2, *iterator);
 }
 
 TEST(ARecordData, TestFromBuffer)

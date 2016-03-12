@@ -1,6 +1,6 @@
-#include "record_data/a_record_data.h"
-
 #include <gtest/gtest.h>
+
+#include "record_data/a_record_data.h"
 
 TEST(ARecordData, TestType)
 {

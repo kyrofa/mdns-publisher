@@ -44,3 +44,8 @@ boost::asio::ip::address_v6 AAAARecordData::ipAddress() const
 {
 	return m_ipAddress;
 }
+
+bool AAAARecordData::operator==(const AAAARecordData &other) const
+{
+	return ipAddress() == other.ipAddress();
+}

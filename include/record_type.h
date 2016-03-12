@@ -5,6 +5,7 @@
 // what we support, here.
 enum RecordType
 {
+	INVALID = 0,
 	A = 1,
 	AAAA = 28
 };

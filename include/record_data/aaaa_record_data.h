@@ -21,6 +21,8 @@ class AAAARecordData: public RecordData
 
 		boost::asio::ip::address_v6 ipAddress() const;
 
+		bool operator==(const AAAARecordData &other) const;
+
 	private:
 		boost::asio::ip::address_v6 m_ipAddress;
 };

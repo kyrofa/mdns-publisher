@@ -18,6 +18,10 @@ set(HEADERS
 	include/query.h
 	include/record_type.h
 	include/record_class.h
+	include/record_data/record_data.h
+	include/record_data/record_data_factory.h
+	include/record_data/a_record_data.h
+	include/record_data/aaaa_record_data.h
 	include/resource_record.h
 )
 
@@ -25,6 +29,10 @@ set(SOURCES
 	src/dns_packet.cpp
 	src/mdns_publisher.cpp
 	src/query.cpp
+	src/record_data/record_data.cpp
+	src/record_data/record_data_factory.cpp
+	src/record_data/a_record_data.cpp
+	src/record_data/aaaa_record_data.cpp
 	src/resource_record.cpp
 )
 

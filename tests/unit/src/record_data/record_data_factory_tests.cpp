@@ -13,7 +13,8 @@ TEST(RecordDataFactory, TestARecordData)
 	expected.toBuffer(buffer);
 
 	std::shared_ptr<RecordData> data = RecordDataFactory::create(RecordType::A,
-	                                                             buffer);
+	                                                             buffer.cbegin(),
+	                                                             buffer.cend());
 
 	ASSERT_EQ(RecordType::A, data->type());
 	EXPECT_EQ(expected, *std::static_pointer_cast<ARecordData>(data));
@@ -27,7 +28,8 @@ TEST(RecordDataFactory, TestAAAARecordData)
 	expected.toBuffer(buffer);
 
 	std::shared_ptr<RecordData> data = RecordDataFactory::create(
-	                                       RecordType::AAAA, buffer);
+	                                       RecordType::AAAA, buffer.cbegin(),
+	                                       buffer.cend());
 
 	ASSERT_EQ(RecordType::AAAA, data->type());
 	EXPECT_EQ(expected, *std::static_pointer_cast<AAAARecordData>(data));
@@ -35,7 +37,9 @@ TEST(RecordDataFactory, TestAAAARecordData)
 
 TEST(RecordDataFactory, TestInvalidRecordType)
 {
+	std::vector<std::uint8_t> buffer;
 	EXPECT_THROW(RecordDataFactory::create(RecordType::INVALID,
-	                                       std::vector<std::uint8_t>()),
+	                                       buffer.cbegin(),
+                                           buffer.cend()),
 	             std::out_of_range);
 }

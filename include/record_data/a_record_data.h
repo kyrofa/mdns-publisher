@@ -12,9 +12,11 @@ class ARecordData: public RecordData
 {
 	public:
 		ARecordData(const std::string &ipAddress);
-		ARecordData(const std::vector<std::uint8_t> &buffer);
+		ARecordData(const std::vector<std::uint8_t>::const_iterator &begin,
+		            const std::vector<std::uint8_t>::const_iterator &end);
 
 		virtual RecordType type() const override;
+		virtual std::uint16_t size() const override;
 
 		virtual void toBuffer(
 		        std::vector<std::uint8_t> &buffer) const override;

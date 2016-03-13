@@ -10,8 +10,10 @@
 
 namespace RecordDataFactory
 {
-	std::shared_ptr<RecordData> create(RecordType recordType,
-	                                   const std::vector<std::uint8_t> &buffer);
+	std::shared_ptr<RecordData> create(
+	        RecordType recordType,
+	        const std::vector<std::uint8_t>::const_iterator &begin,
+	        const std::vector<std::uint8_t>::const_iterator &end);
 }
 
 #endif // RECORD_DATA_FACTORY_H

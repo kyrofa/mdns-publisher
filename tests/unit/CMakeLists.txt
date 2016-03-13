@@ -3,6 +3,7 @@ add_executable(unit-tests
 	src/record_data/a_record_data_tests.cpp
 	src/record_data/aaaa_record_data_tests.cpp
 	src/record_data/record_data_factory_tests.cpp
+	src/resource_record_tests.cpp
 	src/main.cpp
 )
 

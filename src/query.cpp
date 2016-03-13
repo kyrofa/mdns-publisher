@@ -66,8 +66,6 @@ Query::Query(const std::vector<std::uint8_t> &buffer)
 
 void Query::toBuffer(std::vector<uint8_t> &buffer)
 {
-	buffer.clear();
-
 	std::vector<std::string> domainNameSections;
 	boost::split(domainNameSections, m_name, boost::is_any_of("."));
 

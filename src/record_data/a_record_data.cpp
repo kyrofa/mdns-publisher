@@ -13,17 +13,20 @@ ARecordData::ARecordData(const std::string &ipAddress) :
 {
 }
 
-ARecordData::ARecordData(const std::vector<std::uint8_t> &buffer)
+ARecordData::ARecordData(const std::vector<std::uint8_t>::const_iterator &begin,
+                         const std::vector<std::uint8_t>::const_iterator &end)
 {
-	if (buffer.size() != IP_ADDRESS_BYTE_COUNT)
+	auto bufferSize = std::distance(begin, end);
+	if (bufferSize != IP_ADDRESS_BYTE_COUNT)
 	{
 		std::stringstream stream;
-		stream << "Buffer isn't " << IP_ADDRESS_BYTE_COUNT << " bytes long";
+		stream << "Expected " << IP_ADDRESS_BYTE_COUNT << " bytes for A Record,"
+		       << "got " << bufferSize;
 		throw std::runtime_error(stream.str());
 	}
 
 	std::array<std::uint8_t, IP_ADDRESS_BYTE_COUNT> bytes;
-	std::copy(buffer.cbegin(), buffer.cend(), bytes.begin());
+	std::copy(begin, begin+IP_ADDRESS_BYTE_COUNT, bytes.begin());
 
 	m_ipAddress = boost::asio::ip::address_v4(bytes);
 }
@@ -31,6 +34,11 @@ ARecordData::ARecordData(const std::vector<std::uint8_t> &buffer)
 RecordType ARecordData::type() const
 {
 	return RecordType::A;
+}
+
+std::uint16_t ARecordData::size() const
+{
+	return IP_ADDRESS_BYTE_COUNT;
 }
 
 void ARecordData::toBuffer(std::vector<std::uint8_t> &buffer) const

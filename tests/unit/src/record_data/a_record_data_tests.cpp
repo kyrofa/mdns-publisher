@@ -8,6 +8,12 @@ TEST(ARecordData, TestType)
 	EXPECT_EQ(RecordType::A, data.type());
 }
 
+TEST(ARecordData, TestSize)
+{
+	ARecordData data("192.168.1.1");
+	EXPECT_EQ(4, data.size());
+}
+
 TEST(ARecordData, TestToBuffer)
 {
 	ARecordData data("192.168.1.2");
@@ -32,7 +38,7 @@ TEST(ARecordData, TestFromBuffer)
 	std::vector<std::uint8_t> buffer;
 	tmpData.toBuffer(buffer);
 
-	ARecordData data(buffer);
+	ARecordData data(buffer.cbegin(), buffer.cend());
 
 	EXPECT_EQ("192.168.1.2", data.ipAddress().to_string());
 }

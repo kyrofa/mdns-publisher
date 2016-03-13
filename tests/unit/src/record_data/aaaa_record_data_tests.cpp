@@ -9,6 +9,12 @@ TEST(AAAARecordData, TestType)
 	EXPECT_EQ(RecordType::AAAA, data.type());
 }
 
+TEST(AAAARecordData, TestSize)
+{
+	AAAARecordData data("1234:5678:9ABC:DEF1:6171:8192:0212:2232");
+	EXPECT_EQ(16, data.size());
+}
+
 TEST(AAAARecordData, TestToBuffer)
 {
 	AAAARecordData data("1234:5678:9ABC:DEF1:6171:8192:0212:2232");
@@ -48,7 +54,7 @@ TEST(AAAARecordData, TestFromBuffer)
 	std::vector<std::uint8_t> buffer;
 	tmpData.toBuffer(buffer);
 
-	AAAARecordData data(buffer);
+	AAAARecordData data(buffer.cbegin(), buffer.cend());
 
 	const std::string actual = boost::to_upper_copy(data.ipAddress().to_string());
 

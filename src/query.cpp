@@ -105,3 +105,10 @@ RecordClass Query::recordClass() const
 {
 	return m_recordClass;
 }
+
+bool Query::operator==(const Query &other) const
+{
+	return (name() == other.name() &&
+	        recordType() == other.recordType() &&
+	        recordClass() == other.recordClass());
+}

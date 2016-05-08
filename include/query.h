@@ -21,6 +21,8 @@ class Query
 		RecordType recordType() const;
 		RecordClass recordClass() const;
 
+		bool operator==(const Query &other) const;
+
 	private:
 		std::string m_name;
 		RecordType m_recordType;

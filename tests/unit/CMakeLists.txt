@@ -1,4 +1,5 @@
 add_executable(unit-tests
+	src/dns_packet_tests.cpp
 	src/query_tests.cpp
 	src/record_data/a_record_data_tests.cpp
 	src/record_data/aaaa_record_data_tests.cpp

@@ -159,3 +159,13 @@ std::shared_ptr<RecordData> ResourceRecord::data() const
 {
 	return m_data;
 }
+
+bool ResourceRecord::operator==(const ResourceRecord &other) const
+{
+	return (name() == other.name() &&
+	        recordType() == other.recordType() &&
+	        recordClass() == other.recordClass() &&
+	        timeToLive() == other.timeToLive() &&
+	        dataLength() == other.dataLength() &&
+	        *data() == *other.data());
+}

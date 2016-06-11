@@ -26,6 +26,8 @@ class ResourceRecord
 		std::uint16_t dataLength() const;
 		std::shared_ptr<RecordData> data() const;
 
+		bool operator==(const ResourceRecord &other) const;
+
 	private:
 		std::string m_name;
 		RecordType m_recordType;

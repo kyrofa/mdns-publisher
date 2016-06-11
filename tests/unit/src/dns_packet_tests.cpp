@@ -76,17 +76,17 @@ TEST_F(DnsPacketTest, TestConstructor)
 	ASSERT_EQ(1, questions.size());
 	EXPECT_EQ(*query, questions.front());
 
-//	auto answerRecords = packet->answerRecords();
-//	ASSERT_EQ(1, answerRecords.size());
-//	EXPECT_EQ(*answerRecord, answerRecords.front());
+	auto answerRecords = packet->answerRecords();
+	ASSERT_EQ(1, answerRecords.size());
+	EXPECT_EQ(*answerRecord, answerRecords.front());
 
-//	auto authorityRecords = packet->authorityRecords();
-//	ASSERT_EQ(1, authorityRecords.size());
-//	EXPECT_EQ(*authorityRecord, authorityRecords.front());
+	auto authorityRecords = packet->authorityRecords();
+	ASSERT_EQ(1, authorityRecords.size());
+	EXPECT_EQ(*authorityRecord, authorityRecords.front());
 
-//	auto additionalRecords = packet->additionalRecords();
-//	ASSERT_EQ(1, additionalRecords.size());
-//	EXPECT_EQ(*additionalRecord, additionalRecords.front());
+	auto additionalRecords = packet->additionalRecords();
+	ASSERT_EQ(1, additionalRecords.size());
+	EXPECT_EQ(*additionalRecord, additionalRecords.front());
 }
 
 TEST_F(DnsPacketTest, TestToBuffer)

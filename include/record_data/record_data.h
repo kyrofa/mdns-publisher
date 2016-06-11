@@ -15,6 +15,8 @@ class RecordData
 		virtual RecordType type() const = 0;
 		virtual std::uint16_t size() const = 0;
 		virtual void toBuffer(std::vector<std::uint8_t> &buffer) const = 0;
+
+		bool operator==(const RecordData &other) const;
 };
 
 #endif // RECORD_DATA_H

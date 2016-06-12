@@ -16,14 +16,16 @@ ResourceRecord::ResourceRecord(const std::string &name, RecordType recordType,
 {
 }
 
-ResourceRecord::ResourceRecord(const std::vector<uint8_t> &buffer)
+ResourceRecord::ResourceRecord(
+        const std::vector<std::uint8_t>::const_iterator &begin,
+        const std::vector<std::uint8_t>::const_iterator &end)
 {
-	if (buffer.size() == 0)
+	if (begin == end)
 	{
 		throw std::runtime_error("Buffer was empty");
 	}
 
-	auto iterator = buffer.cbegin();
+	auto iterator = begin;
 
 	// Extract domain name
 	m_name.clear();
@@ -35,7 +37,7 @@ ResourceRecord::ResourceRecord(const std::vector<uint8_t> &buffer)
 		}
 
 		int segmentSize = *iterator++;
-		if (std::distance(iterator, buffer.cend()) < segmentSize)
+		if (std::distance(iterator, end) < segmentSize)
 		{
 			throw std::out_of_range(
 			            "Domain segment size was larger than actual segment");
@@ -48,7 +50,7 @@ ResourceRecord::ResourceRecord(const std::vector<uint8_t> &buffer)
 	}
 	++iterator;
 
-	if (std::distance(iterator, buffer.cend()) < 10)
+	if (std::distance(iterator, end) < 10)
 	{
 		throw std::out_of_range("Buffer doesn't have room for rest of resource "
 		                        "record");
@@ -83,7 +85,7 @@ ResourceRecord::ResourceRecord(const std::vector<uint8_t> &buffer)
 	// anyway.
 	// std::uint16_t length = network_to_host_short((high << 8) | low);
 
-	m_data = RecordDataFactory::create(m_recordType, iterator, buffer.cend());
+	m_data = RecordDataFactory::create(m_recordType, iterator, end);
 }
 
 void ResourceRecord::toBuffer(std::vector<std::uint8_t> &buffer) const

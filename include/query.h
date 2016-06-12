@@ -13,9 +13,10 @@ class Query
 	public:
 		Query(const std::string &name, RecordType recordType,
 		      RecordClass recordClass);
-		Query(const std::vector<std::uint8_t> &buffer);
+		Query(const std::vector<std::uint8_t>::const_iterator &begin,
+		      const std::vector<std::uint8_t>::const_iterator &end);
 
-		void toBuffer(std::vector<std::uint8_t> &buffer);
+		void toBuffer(std::vector<std::uint8_t> &buffer) const;
 
 		std::string name() const;
 		RecordType recordType() const;

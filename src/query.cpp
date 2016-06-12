@@ -12,14 +12,15 @@ Query::Query(const std::string &name, RecordType recordType,
 {
 }
 
-Query::Query(const std::vector<std::uint8_t> &buffer)
+Query::Query(const std::vector<std::uint8_t>::const_iterator &begin,
+             const std::vector<std::uint8_t>::const_iterator &end)
 {
-	if (buffer.size() == 0)
+	if (begin == end)
 	{
 		throw std::runtime_error("Buffer was empty");
 	}
 
-	auto iterator = buffer.cbegin();
+	auto iterator = begin;
 
 	// Extract domain name
 	m_name.clear();
@@ -31,7 +32,7 @@ Query::Query(const std::vector<std::uint8_t> &buffer)
 		}
 
 		int segmentSize = *iterator++;
-		if (std::distance(iterator, buffer.cend()) < segmentSize)
+		if (std::distance(iterator, end) < segmentSize)
 		{
 			throw std::out_of_range(
 			            "Domain segment size was larger than actual segment");
@@ -44,7 +45,7 @@ Query::Query(const std::vector<std::uint8_t> &buffer)
 	}
 	++iterator;
 
-	if (std::distance(iterator, buffer.cend()) < 4)
+	if (std::distance(iterator, end) < 4)
 	{
 		throw std::out_of_range("Buffer doesn't have room for type and class");
 	}
@@ -64,16 +65,16 @@ Query::Query(const std::vector<std::uint8_t> &buffer)
 	                                             (high << 8) | low));
 }
 
-void Query::toBuffer(std::vector<uint8_t> &buffer)
+void Query::toBuffer(std::vector<uint8_t> &buffer) const
 {
 	std::vector<std::string> domainNameSections;
 	boost::split(domainNameSections, m_name, boost::is_any_of("."));
 
 	// Push the domain name octets onto the buffer
-	for(const auto &section : domainNameSections)
+	for (const auto &section : domainNameSections)
 	{
 		buffer.push_back(section.size());
-		for(const auto &character : section)
+		for (const auto &character : section)
 		{
 			buffer.push_back(character);
 		}

@@ -45,7 +45,7 @@ TEST(Query, TestFromBuffer)
 	std::vector<std::uint8_t> buffer;
 	tmpQuery.toBuffer(buffer);
 
-	Query query(buffer);
+	Query query(buffer.cbegin(), buffer.cend());
 
 	EXPECT_EQ("foo.com", query.name());
 	EXPECT_EQ(RecordType::A, query.recordType());

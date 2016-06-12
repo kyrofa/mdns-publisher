@@ -15,7 +15,8 @@ class ResourceRecord
 		ResourceRecord(const std::string &name, RecordType recordType,
 		               RecordClass recordClass, std::uint32_t timeToLive,
 		               const std::shared_ptr<RecordData> &data);
-		ResourceRecord(const std::vector<std::uint8_t> &buffer);
+		ResourceRecord(const std::vector<std::uint8_t>::const_iterator &begin,
+		               const std::vector<std::uint8_t>::const_iterator &end);
 
 		void toBuffer(std::vector<std::uint8_t> &buffer) const;
 

@@ -97,7 +97,7 @@ TEST_F(DnsPacketTest, TestToBuffer)
 	auto totalDataLength = answerRecord->dataLength() +
 	                       authorityRecord->dataLength() +
 	                       additionalRecord->dataLength();
-	ASSERT_EQ(12 + totalDataLength, buffer.size());
+	ASSERT_EQ(12 + 13 + 22*3 + totalDataLength, buffer.size());
 
 	auto iterator = buffer.cbegin();
 
@@ -107,52 +107,76 @@ TEST_F(DnsPacketTest, TestToBuffer)
 	std::uint16_t id = *iterator++ << 8;
 	id |= *iterator++;
 	id = network_to_host_short(id);
-	EXPECT_EQ(packet->id(), id);/*
+	EXPECT_EQ(packet->id(), id);
 
-	// Verify domain name
-	EXPECT_EQ(3, *iterator++);
-	EXPECT_EQ('f', *iterator++);
-	EXPECT_EQ('o', *iterator++);
-	EXPECT_EQ('o', *iterator++);
-	EXPECT_EQ(3, *iterator++);
-	EXPECT_EQ('c', *iterator++);
-	EXPECT_EQ('o', *iterator++);
-	EXPECT_EQ('m', *iterator++);
-	EXPECT_EQ(0, *iterator++);
+	std::uint8_t byte = *iterator++;
 
-	// Verify record type
-	int recordType = *iterator++ << 8;
-	recordType |= *iterator++;
-	recordType = boost::asio::detail::socket_ops::network_to_host_short(
-	                 recordType);
-	ASSERT_EQ(RecordType::A, recordType);
+	// Verify query-response
+	EXPECT_EQ(packet->queryResponse(), byte >> 7);
 
-	// Verify record class
-	int recordClass = *iterator++ << 8;
-	recordClass |= *iterator++;
-	recordClass = boost::asio::detail::socket_ops::network_to_host_short(
-	                  recordClass);
-	EXPECT_EQ(RecordClass::INTERNET, recordClass);
+	// Verify opcode
+	EXPECT_EQ(packet->opCode(), (byte & 0x78) >> 3);
 
-	// Verify time to live (TTL)
-	int timeToLive = *iterator++ << 24;
-	timeToLive |= *iterator++ << 16;
-	timeToLive |= *iterator++ << 8;
-	timeToLive |= *iterator++;
-	timeToLive = boost::asio::detail::socket_ops::network_to_host_long(
-	                 timeToLive);
-	EXPECT_EQ(60, timeToLive);
+	// Verify authoritate answer
+	EXPECT_EQ(packet->authoritativeAnswer(), (byte & 0x04) >> 2);
 
-	// Verify data length
-	int dataLength = *iterator++ << 8;
-	dataLength |= *iterator++;
-	dataLength = boost::asio::detail::socket_ops::network_to_host_short(
-	                 dataLength);
-	EXPECT_EQ(4, dataLength);
+	// Verify truncation
+	EXPECT_EQ(packet->truncated(), (byte & 0x02) >> 1);
 
-	std::vector<std::uint8_t> dataBuffer(iterator, buffer.cend());
-	ARecordData finalData(dataBuffer.cbegin(), dataBuffer.cend());
-	EXPECT_EQ(*aRecordData, finalData);*/
+	// Verify recusion desired
+	EXPECT_EQ(packet->recursionDesired(), byte & 0x01);
+
+	byte = *iterator++;
+
+	// Verify recursion available
+	EXPECT_EQ(packet->recursionAvailable(), byte >> 7);
+
+	// Verify authenticated data
+	EXPECT_EQ(packet->authenticatedData(), (byte & 0x20) >> 5);
+
+	// Verify checking disabled
+	EXPECT_EQ(packet->checkingDisabled(), (byte & 0x10) >> 4);
+
+	// Verify return code
+	EXPECT_EQ(packet->returnCode(), byte & 0x0f);
+
+	auto questions = packet->questions();
+	auto answerRecords = packet->answerRecords();
+	auto authorityRecords = packet->authorityRecords();
+	auto additionalRecords = packet->additionalRecords();
+
+	// Verify total questions
+	std::uint16_t totalQuestions = *iterator++ << 8;
+	totalQuestions |= *iterator++;
+	totalQuestions = network_to_host_short(totalQuestions);
+	EXPECT_EQ(questions.size(), totalQuestions);
+
+	// Verify total answer records
+	std::uint16_t totalAnswerRecords = *iterator++ << 8;
+	totalAnswerRecords |= *iterator++;
+	totalAnswerRecords = network_to_host_short(totalAnswerRecords);
+	EXPECT_EQ(answerRecords.size(), totalAnswerRecords);
+
+	// Verify total authority records
+	std::uint16_t totalAuthorityRecords = *iterator++ << 8;
+	totalAuthorityRecords |= *iterator++;
+	totalAuthorityRecords = network_to_host_short(totalAuthorityRecords);
+	EXPECT_EQ(authorityRecords.size(), totalAuthorityRecords);
+
+	// Verify total additional records
+	std::uint16_t totalAdditionalRecords = *iterator++ << 8;
+	totalAdditionalRecords |= *iterator++;
+	totalAdditionalRecords = network_to_host_short(totalAdditionalRecords);
+	EXPECT_EQ(additionalRecords.size(), totalAdditionalRecords);
+
+	// Verify query
+	Query finalQuery(iterator, buffer.cend());
+	EXPECT_EQ(*aRecordData, finalData);
+
+	EXPECT_EQ(*query, questions.front());
+	EXPECT_EQ(*answerRecord, answerRecords.front());
+	EXPECT_EQ(*authorityRecord, authorityRecords.front());
+	EXPECT_EQ(*additionalRecord, additionalRecords.front());
 }
 
 //TEST(ResourceRecord, TestFromBuffer)

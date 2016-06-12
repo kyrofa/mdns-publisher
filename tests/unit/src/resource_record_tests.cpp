@@ -61,8 +61,7 @@ TEST(ResourceRecord, TestToBuffer)
 	                 dataLength);
 	EXPECT_EQ(4, dataLength);
 
-	std::vector<std::uint8_t> dataBuffer(iterator, buffer.cend());
-	ARecordData finalData(dataBuffer.cbegin(), dataBuffer.cend());
+	ARecordData finalData(iterator, buffer.cend());
 	EXPECT_EQ(*aRecordData, finalData);
 }
 
@@ -75,7 +74,7 @@ TEST(ResourceRecord, TestFromBuffer)
 	std::vector<std::uint8_t> buffer;
 	tmpRecord.toBuffer(buffer);
 
-	ResourceRecord record(buffer);
+	ResourceRecord record(buffer.cbegin(), buffer.cend());
 
 	EXPECT_EQ("foo.com", record.name());
 	EXPECT_EQ(RecordType::A, record.recordType());

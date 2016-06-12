@@ -1,3 +1,5 @@
+#include <boost/asio/detail/socket_ops.hpp>
+
 #include "dns_packet.h"
 
 DnsPacket::DnsPacket(std::uint16_t identification, QueryResponse queryResponse,
@@ -29,7 +31,84 @@ DnsPacket::DnsPacket(std::uint16_t identification, QueryResponse queryResponse,
 
 void DnsPacket::toBuffer(std::vector<std::uint8_t> &buffer)
 {
+	using boost::asio::detail::socket_ops::host_to_network_short;
 
+	// Push the ID
+	auto idShort = host_to_network_short(id());
+	buffer.push_back((idShort & 0xff00) >> 8);
+	buffer.push_back(idShort & 0x00ff);
+
+	std::uint8_t byte = 0;
+
+	// Add the query/response bit
+	byte |= (queryResponse() & 0x01) << 7;
+
+	// Add the opcode
+	byte |= (opCode() & 0x0f) << 3;
+
+	// Add the authoritate answer
+	byte |= (authoritativeAnswer() & 0x01) << 2;
+
+	// Add truncation
+	byte |= (truncated() & 0x01) << 1;
+
+	// Add recurion desired
+	byte |= recursionDesired() & 0x01;
+	buffer.push_back(byte);
+	byte = 0;
+
+	// Add recursion available
+	byte |= (recursionAvailable() & 0x01) << 6;
+
+	// Add authenticated data
+	byte |= (authenticatedData() & 0x01) << 5;
+
+	// Add checking disabled
+	byte |= (checkingDisabled() & 0x01) << 4;
+
+	// Add return code
+	byte |= returnCode() & 0x0f;
+	buffer.push_back(byte);
+
+	// Add total questions
+	auto totalQuestions = host_to_network_short(questions().size());
+	buffer.push_back((totalQuestions & 0xff00) >> 8);
+	buffer.push_back(totalQuestions & 0x00ff);
+
+	// Add total answer records
+	auto totalAnswerRecords = host_to_network_short(answerRecords().size());
+	buffer.push_back((totalAnswerRecords & 0xff00) >> 8);
+	buffer.push_back(totalAnswerRecords & 0x00ff);
+
+	// Add total authority records
+	auto totalAuthorityRecords = host_to_network_short(authorityRecords().size());
+	buffer.push_back((totalAuthorityRecords & 0xff00) >> 8);
+	buffer.push_back(totalAuthorityRecords & 0x00ff);
+
+	// Add total additional records
+	auto totalAdditionalRecords = host_to_network_short(additionalRecords().size());
+	buffer.push_back((totalAdditionalRecords & 0xff00) >> 8);
+	buffer.push_back(totalAdditionalRecords & 0x00ff);
+
+	for (const auto &query : questions())
+	{
+		query.toBuffer(buffer);
+	}
+
+	for (const auto &record : answerRecords())
+	{
+		record.toBuffer(buffer);
+	}
+
+	for (const auto &record : authorityRecords())
+	{
+		record.toBuffer(buffer);
+	}
+
+	for (const auto &record : additionalRecords())
+	{
+		record.toBuffer(buffer);
+	}
 }
 
 std::uint16_t DnsPacket::id() const
